@@ -1,0 +1,10 @@
+{
+  "development": {
+    "driver": "pg",
+    "user": "postgres",
+    "password": "postgres",
+    "host": "localhost",
+    "database": "sportscalendar",
+    "schema": "sportscalendar"
+  }
+}
