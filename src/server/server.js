@@ -4,8 +4,11 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 
 import { query } from "./modules/postgres";
-import { scrape, url } from "./scrapers/track-and-field/lat-athletics.lv";
+import { scrape as scrape0, url as url0 } from "./scrapers/track-and-field/lat-athletics.lv";
+import { scrape as scrape1, url as url1 } from "./scrapers/beach-volleyball/fivb.org";
 import { deleteScraperData } from "./modules/scrapers";
+import { storeEvents } from "./modules/events";
+
 
 const server = express();
 
@@ -28,14 +31,31 @@ server.get("/fetch-events", (req, res) => {
 
 // TODO create a cron job for each scraper
 server.get("/run-all-scrapers", (req, res) => {
-    deleteScraperData(url, (deleteErr) => {
-        if (deleteErr) {
-            console.log("Error while deleting scraped data for URL " + url, deleteErr);
-        } else {
-            scrape((err, result) => {
-                res.json(err || result);
-            });
-        }
+    const scrapers = [
+        { scrape: scrape0, url: url0 },
+        { scrape: scrape1, url: url1 }
+    ];
+    Promise.all(scrapers.map(({ scrape, url }) => new Promise((resolve, reject) => {
+        deleteScraperData(url, (deleteErr) => {
+            if (deleteErr) {
+                console.log("Error while deleting scraped data for URL " + url, deleteErr);
+            } else {
+                scrape((err, events) => {
+                    storeEvents(events, (error, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(result);
+                        }
+                    });
+                });
+            }
+        });
+    }))).then(results => {
+        res.json(results);
+    })
+    .catch(err => {
+        res.json(err);
     });
 });
 

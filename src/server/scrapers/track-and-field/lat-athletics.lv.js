@@ -1,5 +1,4 @@
 import Xray from "x-ray";
-import { storeEvents } from "../../modules/events";
 
 const xray = Xray();
 
@@ -25,6 +24,7 @@ export const scrape = (resultsScrapedCallback) => {
         if (err) {
             // send e-mail about error
             console.log("Error while scraping data from " + url, err.stack);
+            resultsScrapedCallback(err);
             return;
         }
 
@@ -38,8 +38,6 @@ export const scrape = (resultsScrapedCallback) => {
             event.attributes = {};
         });
 
-        storeEvents(data.events, (error, result) => {
-            resultsScrapedCallback(error, result);
-        });
+        resultsScrapedCallback(null, data.events);
     });
 }
