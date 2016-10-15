@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import { fetch } from "./modules/store";
 import { scrape as scrape0, url as url0 } from "./scrapers/track-and-field/lat-athletics.lv";
 import { scrape as scrape1, url as url1 } from "./scrapers/beach-volleyball/fivb.org";
+import { scrape as scrape2, url as url2 } from './scrapers/basketball/basket.lv'
 import { save, deleteScraperData } from './modules/store'
 
 
@@ -36,7 +37,8 @@ server.get("/fetch-events", (req, res) => {
 server.get("/run-all-scrapers", (req, res) => {
     const scrapers = [
         { scrape: scrape0, url: url0 },
-        { scrape: scrape1, url: url1 }
+        { scrape: scrape1, url: url1 },
+        { scrape: scrape2, url: url2 }
     ];
     Promise.all(scrapers.map(({ scrape, url }) => new Promise((resolve, reject) => {
         deleteScraperData(url)
