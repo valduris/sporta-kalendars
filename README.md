@@ -22,3 +22,7 @@ Open `localhost:3333/run-all-scrapers` to fetch data, then go to `localhost:3333
 ### Create
 
 `node_modules/.bin/db-migrate create migration-name --config src/server/config/database.json -env development -m src/server/migrations`
+
+## Alternative setup
+You can also use [NeDB](https://github.com/louischatriot/nedb) instead of PostgreSQL
+No need to install any binaries, simply `npm start -- nedb`

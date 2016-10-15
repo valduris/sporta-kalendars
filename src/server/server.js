@@ -3,11 +3,10 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 
-import { query } from "./modules/postgres";
+import { fetch } from "./modules/store";
 import { scrape as scrape0, url as url0 } from "./scrapers/track-and-field/lat-athletics.lv";
 import { scrape as scrape1, url as url1 } from "./scrapers/beach-volleyball/fivb.org";
-import { deleteScraperData } from "./modules/scrapers";
-import { storeEvents } from "./modules/events";
+import { save, deleteScraperData } from './modules/store'
 
 
 const server = express();
@@ -24,9 +23,13 @@ server.get("/", (req, res) => {
 });
 
 server.get("/fetch-events", (req, res) => {
-    query("SELECT title, start_time as start, end_time as end FROM events", [], (queryError, result) => {
-        res.json(queryError || result.rows);
-    });
+    fetch()
+        .then(events => {
+            res.json(events)
+        })
+        .catch(err => {
+            res.end(err)
+        })
 });
 
 // TODO create a cron job for each scraper
@@ -36,21 +39,17 @@ server.get("/run-all-scrapers", (req, res) => {
         { scrape: scrape1, url: url1 }
     ];
     Promise.all(scrapers.map(({ scrape, url }) => new Promise((resolve, reject) => {
-        deleteScraperData(url, (deleteErr) => {
-            if (deleteErr) {
-                console.log("Error while deleting scraped data for URL " + url, deleteErr);
-            } else {
+        deleteScraperData(url)
+            .then(() =>{
                 scrape((err, events) => {
-                    storeEvents(events, (error, result) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(result);
-                        }
-                    });
-                });
-            }
-        });
+                    save(events)
+                        .then(resolve)
+                        .catch(reject)
+                })
+            })
+            .catch(err => {
+                console.log("Error while deleting scraped data for URL " + url, err)
+            })
     }))).then(results => {
         res.json(results);
     })
