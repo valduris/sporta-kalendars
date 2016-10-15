@@ -24,6 +24,7 @@
     "react-dom": "0.14.7",
     "react-redux": "4.4.x",
     "redux": "3.3.x",
+    "stylus": "^0.54.5",
     "x-ray": "2.3.0"
   },
   "devDependencies": {
@@ -45,7 +46,7 @@
     "gulp": "3.9.x",
     "nodemon": "1.9.2",
     "style-loader": "0.13.x",
-    "stylus-loader": "1.5.x",
+    "stylus-loader": "2.3.x",
     "webpack": "1.12.x",
     "webpack-stream": "3.1.x"
   }
