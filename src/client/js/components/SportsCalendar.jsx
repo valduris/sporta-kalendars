@@ -13,7 +13,10 @@ class SportsCalendar extends React.Component {
                 <div className="top-navigation">
                 </div>
                 <div className="main-content">
-                    <h1>Sports Calendar</h1>
+                    <h1>
+                        <img src="http://www.windowgenie.com/wp-content/themes/wg/img/wg-icon-02.svg" />
+                        <span>Sports Calendar</span>
+                    </h1>
                     <FullCalendar />
                 </div>
                 <div className="footer">

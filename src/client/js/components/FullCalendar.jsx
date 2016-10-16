@@ -16,10 +16,15 @@ class FullCalendar extends React.Component {
                 right: "month,basicWeek,basicDay"
             },
             firstDay: 1,
-            defaultDate: "2016-05-14",
-            editable: true,
+            nowIndicator: true,
             eventLimit: true, // allow "more" link when too many events
-            events: "/fetch-events"
+            events: "/fetch-events",
+            timeFormat: 'H:mm',
+            eventRender: (event, el) => {
+                el[0].classList.add('hint--bottom')
+                el[0].classList.add('hint--medium')
+                el[0].setAttribute('aria-label', `${event.title} @ ${event.place}`)
+            }
         });
     }
     render() {
